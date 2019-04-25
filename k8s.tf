@@ -1,9 +1,9 @@
 resource "google_container_cluster" "primary" {
-  name     = "${var.cluster_name}"
-  location = "${var.region}"
-  project  = "${var.project}"
-  network  = "${google_compute_network.gke_vpc.name}"
-
+  name                     = "${var.cluster_name}"
+  location                 = "${var.region}"
+  project                  = "${var.project}"
+  network                  = "${google_compute_network.gke_vpc.name}"
+  enable_legacy_abac       = true
   remove_default_node_pool = true
 
   initial_node_count = 1
