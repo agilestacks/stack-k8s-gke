@@ -38,7 +38,15 @@ plan:
 apply:
 	$(terraform) apply $(TF_CLI_ARGS) -Xshadow=false $(TFPLAN)
 
-deploy: init plan apply
+output:
+	@echo
+	@echo Outputs:
+	@echo dns_name = $(NAME)
+	@echo dns_base_domain = $(BASE_DOMAIN)
+	@echo
+.PHONY: output
+
+deploy: init plan apply output
 
 destroy: TF_CLI_ARGS:=-destroy $(TF_CLI_ARGS)
 destroy: plan	
