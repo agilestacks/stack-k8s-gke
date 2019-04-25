@@ -24,7 +24,7 @@ parameters:
   - name: kubernetes.flavor
     value: k8s-gke
   - name: cloud.kind
-    value: gke
+    value: gcp
   - name: dns.domain
     env: DOMAIN_NAME
   - name: cloud.region
@@ -54,6 +54,7 @@ parameters:
 outputs:
   - name: cloud.kind
   - name: cloud.region
+  - name: cloud.project
   - name: dns.domain
   - name: dns.name
     fromTfVar: dns_name
