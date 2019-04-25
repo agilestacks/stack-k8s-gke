@@ -17,7 +17,6 @@ export TF_VAR_node_machine_type ?= g1-small
 export TF_VAR_min_node_count ?= 1
 export TF_VAR_max_node_count ?= 3
 
-export GOOGLE_CREDENTIALS=$(GOOGLE_CLOUD_KEYFILE_JSON)
 terraform   ?= terraform-v0.11
 export TF_LOG      ?= info
 export TF_DATA_DIR ?= .terraform/$(DOMAIN_NAME)
