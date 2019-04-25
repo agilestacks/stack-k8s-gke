@@ -3,3 +3,8 @@ provider "google" {
   region  = "${var.region}"
   zone    = "${var.zone}"
 }
+
+terraform {
+  required_version = ">= 0.11.3"
+  backend          "gcs"            {}
+}
