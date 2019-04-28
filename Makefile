@@ -9,6 +9,8 @@ BASE_DOMAIN    := $(shell echo $(DOMAIN_NAME) | cut -d. -f2-)
 STATE_BUCKET ?= gcp-superhub-io
 STATE_REGION ?= us-central1
 
+SERVICE_ACCOUNT ?= asi
+
 export TF_VAR_base_domain ?= $(BASE_DOMAIN)
 export TF_VAR_project ?= superhub
 export TF_VAR_region ?= us-central1
@@ -24,6 +26,9 @@ export TF_LOG_PATH ?= $(TF_DATA_DIR)/terraform.log
 TF_CLI_ARGS := -no-color -input=false -lock=false
 TFPLAN := $(TF_DATA_DIR)/$(DOMAIN_NAME).tfplan
 
+gcloud ?= gcloud
+kubectl ?= kubectl
+
 init:
 	@mkdir -p $(TF_DATA_DIR)
 	$(terraform) init -get=true $(TF_CLI_ARGS) -reconfigure -force-copy \
@@ -37,17 +42,43 @@ plan:
 apply:
 	$(terraform) apply $(TF_CLI_ARGS) -Xshadow=false $(TFPLAN)
 
+gcontext:
+	$(gcloud) auth activate-service-account \
+		--key-file=$(GOOGLE_APPLICATION_CREDENTIALS)
+	$(gcloud) container clusters get-credentials $(NAME) --region $(TF_VAR_region)
+
+createsa:
+	@if $(kubectl) get -n default serviceaccount $(SERVICE_ACCOUNT) ; then \
+		echo "Service Account $(SERVICE_ACCOUNT) exists"; \
+	else \
+		$(kubectl) create -n default serviceaccount $(SERVICE_ACCOUNT); \
+		$(kubectl) create clusterrolebinding $(SERVICE_ACCOUNT)-cluster-admin-binding \
+			--clusterrole=cluster-admin --serviceaccount=default:$(SERVICE_ACCOUNT); \
+	fi	
+
+token:
+	$(eval SECRET=$(shell $(kubectl) get serviceaccount $(SERVICE_ACCOUNT) -o json | \
+		jq '.secrets[] | select(.name | contains("token")).name'))
+	$(eval TOKEN_BASE64=$(shell $(kubectl) get secret $(SECRET) -o json | \
+		jq '.data.token'))	
+	$(eval TOKEN=$(shell openssl enc -A -base64 -d <<< $(TOKEN_BASE64)))
+
+deletesa:	
+	-$(kubectl) --context="$(DOMAIN_NAME)" delete -n default serviceaccount $(SERVICE_ACCOUNT)
+	-$(kubectl) delete -n default serviceaccount $(SERVICE_ACCOUNT)
+
 output:
 	@echo
 	@echo Outputs:
 	@echo dns_name = $(NAME)
 	@echo dns_base_domain = $(BASE_DOMAIN)
+	@echo token = $(TOKEN)
 	@echo
 .PHONY: output
 
-deploy: init plan apply output
+deploy: init plan apply gcontext createsa token output
 
 destroy: TF_CLI_ARGS:=-destroy $(TF_CLI_ARGS)
 destroy: plan	
 
-undeploy: init destroy apply
+undeploy: deletesa init destroy apply

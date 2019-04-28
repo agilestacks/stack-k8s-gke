@@ -39,6 +39,9 @@ parameters:
 
   - name: component.kubernetes
     parameters:
+    - name: serviceaccount
+      value: asi
+      env: SERVICE_ACCOUNT
     - name: gke
       parameters:
       - name: nodeMachineType
