@@ -1,6 +1,6 @@
 data "google_container_engine_versions" "latest" {
   location       = "${var.region}"
-  version_prefix = "1.11."
+  version_prefix = "1.12."
 }
 
 resource "google_container_cluster" "primary" {
