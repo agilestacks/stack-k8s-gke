@@ -22,7 +22,7 @@ lifecycle:
 
 parameters:
   - name: kubernetes.flavor
-    value: k8s-gke
+    value: gke
   - name: cloud.kind
     value: gcp
   - name: dns.domain
@@ -65,7 +65,5 @@ outputs:
     fromTfVar: endpoint
   - name: kubernetes.api.caCert
     fromTfVar: api_ca_crt
-  - name: kubernetes.api.clientCert
-    fromTfVar: api_client_crt
-  - name: kubernetes.api.clientKey
-    fromTfVar: api_client_key
+  - name: kubernetes.api.token
+    fromTfVar: token 

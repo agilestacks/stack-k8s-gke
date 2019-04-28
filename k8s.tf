@@ -8,7 +8,6 @@ resource "google_container_cluster" "primary" {
   location                 = "${var.region}"
   project                  = "${var.project}"
   network                  = "${google_compute_network.gke_vpc.name}"
-  enable_legacy_abac       = true
   remove_default_node_pool = true
   min_master_version       = "${data.google_container_engine_versions.latest.latest_node_version}"
   node_version             = "${data.google_container_engine_versions.latest.latest_node_version}"
@@ -18,10 +17,6 @@ resource "google_container_cluster" "primary" {
   master_auth {
     username = ""
     password = ""
-
-    client_certificate_config {
-      issue_client_certificate = true
-    }
   }
 }
 
@@ -52,16 +47,6 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
       "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
     ]
   }
-}
-
-resource "local_file" "client_key" {
-  content  = "${base64decode(google_container_cluster.primary.master_auth.0.client_key)}"
-  filename = "${path.cwd}/.terraform/${var.cluster_name}.${var.base_domain}/client_key.pem"
-}
-
-resource "local_file" "client_certificate" {
-  content  = "${base64decode(google_container_cluster.primary.master_auth.0.client_certificate)}"
-  filename = "${path.cwd}/.terraform/${var.cluster_name}.${var.base_domain}/client_certificate.pem"
 }
 
 resource "local_file" "cluster_ca_certificate" {
