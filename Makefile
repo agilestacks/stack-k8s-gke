@@ -11,9 +11,16 @@ STATE_REGION ?= us-central1
 
 SERVICE_ACCOUNT ?= asi
 
+LOCATION := $(REGION)
+LOCATION_KIND :=--region
+ifneq (,$(ZONE))
+	LOCATION=$(ZONE)
+	LOCATION_KIND=--zone
+endif
+
 export TF_VAR_base_domain ?= $(BASE_DOMAIN)
 export TF_VAR_project ?= superhub
-export TF_VAR_region ?= us-central1
+export TF_VAR_location ?= $(LOCATION)
 export TF_VAR_cluster_name := $(NAME)
 export TF_VAR_node_machine_type ?= g1-small
 export TF_VAR_min_node_count ?= 1
@@ -45,7 +52,7 @@ apply:
 gcontext:
 	$(gcloud) auth activate-service-account \
 		--key-file=$(GOOGLE_APPLICATION_CREDENTIALS)
-	$(gcloud) container clusters get-credentials $(NAME) --region $(TF_VAR_region)
+	$(gcloud) container clusters get-credentials $(NAME) $(LOCATION_KIND) $(TF_VAR_location)
 
 createsa:
 	@if $(kubectl) get -n default serviceaccount $(SERVICE_ACCOUNT) ; then \
@@ -63,9 +70,8 @@ token:
 		jq '.data.token'))	
 	$(eval TOKEN=$(shell openssl enc -A -base64 -d <<< $(TOKEN_BASE64)))
 
-deletesa:	
-	-$(kubectl) --context="$(DOMAIN_NAME)" delete -n default serviceaccount $(SERVICE_ACCOUNT)
-	-$(kubectl) delete -n default serviceaccount $(SERVICE_ACCOUNT)
+region:
+	$(eval REGION=$(shell echo $(LOCATION) | cut -d- -f1-2))
 
 output:
 	@echo
@@ -73,12 +79,13 @@ output:
 	@echo dns_name = $(NAME)
 	@echo dns_base_domain = $(BASE_DOMAIN)
 	@echo token = $(TOKEN)
+	@echo region = $(REGION)
 	@echo
 .PHONY: output
 
-deploy: init plan apply gcontext createsa token output
+deploy: init plan apply gcontext createsa token region output
 
 destroy: TF_CLI_ARGS:=-destroy $(TF_CLI_ARGS)
 destroy: plan	
 
-undeploy: deletesa init destroy apply
+undeploy: init destroy apply
