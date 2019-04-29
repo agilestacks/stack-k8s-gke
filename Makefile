@@ -61,7 +61,8 @@ createsa:
 		$(kubectl) create -n default serviceaccount $(SERVICE_ACCOUNT); \
 		$(kubectl) create clusterrolebinding $(SERVICE_ACCOUNT)-cluster-admin-binding \
 			--clusterrole=cluster-admin --serviceaccount=default:$(SERVICE_ACCOUNT); \
-	fi	
+	fi
+	@sleep 10s
 
 token:
 	$(eval SECRET=$(shell $(kubectl) get serviceaccount $(SERVICE_ACCOUNT) -o json | \
