@@ -51,8 +51,6 @@ apply:
 	$(terraform) apply $(TF_CLI_ARGS) -Xshadow=false $(TFPLAN)
 
 gcontext:
-	$(gcloud) auth activate-service-account \
-		--key-file=$(GOOGLE_APPLICATION_CREDENTIALS)
 	$(gcloud) config set project $(TF_VAR_project)		
 	$(gcloud) container clusters get-credentials $(CLUSTER_NAME) $(LOCATION_KIND) $(TF_VAR_location)
 
