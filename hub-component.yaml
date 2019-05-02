@@ -61,7 +61,6 @@ outputs:
   - name: kubernetes.gke.cluster
   - name: cloud.region
     fromTfVar: region
-  - name: cloud.project
   - name: dns.domain
   - name: dns.name
     fromTfVar: dns_name
