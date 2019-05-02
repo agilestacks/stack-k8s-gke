@@ -22,7 +22,7 @@ endif
 export TF_VAR_base_domain ?= $(BASE_DOMAIN)
 export TF_VAR_project ?= superhub
 export TF_VAR_location ?= $(LOCATION)
-export TF_VAR_cluster_name := $(NAME)
+export TF_VAR_cluster_name := $(CLUSTER_NAME)
 export TF_VAR_node_machine_type ?= g1-small
 export TF_VAR_min_node_count ?= 1
 export TF_VAR_max_node_count ?= 3
@@ -54,7 +54,7 @@ gcontext:
 	$(gcloud) auth activate-service-account \
 		--key-file=$(GOOGLE_APPLICATION_CREDENTIALS)
 	$(gcloud) config set project $(TF_VAR_project)		
-	$(gcloud) container clusters get-credentials $(NAME) $(LOCATION_KIND) $(TF_VAR_location)
+	$(gcloud) container clusters get-credentials $(CLUSTER_NAME) $(LOCATION_KIND) $(TF_VAR_location)
 
 createsa:
 	@if $(kubectl) get -n default serviceaccount $(SERVICE_ACCOUNT) ; then \

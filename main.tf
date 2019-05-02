@@ -1,5 +1,6 @@
 provider "google" {
   project = "${var.project}"
+  version = "2.3.0"
 }
 
 terraform {

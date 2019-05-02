@@ -21,10 +21,10 @@ lifecycle:
       url: https://${kubernetes.api.endpoint}
 
 parameters:
+  - name: kubernetes.gke.cluster
+    env: CLUSTER_NAME
   - name: kubernetes.flavor
     value: gke
-  - name: cloud.kind
-    value: gcp
   - name: dns.domain
     env: DOMAIN_NAME
   - name: cloud.region
@@ -32,8 +32,8 @@ parameters:
     env: REGION
   - name: cloud.zone
     empty: allow
-    env: ZONE    
-  - name: cloud.project
+    env: ZONE
+  - name: cloud.gcpProjectId
     env: TF_VAR_project
 
   - name: terraform.bucket.name
@@ -58,7 +58,7 @@ parameters:
         env: TF_VAR_preemptible
 
 outputs:
-  - name: cloud.kind
+  - name: kubernetes.gke.cluster
   - name: cloud.region
     fromTfVar: region
   - name: cloud.project
