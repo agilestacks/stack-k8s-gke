@@ -53,6 +53,7 @@ apply:
 gcontext:
 	$(gcloud) auth activate-service-account \
 		--key-file=$(GOOGLE_APPLICATION_CREDENTIALS)
+	$(gcloud) config set project $(TF_VAR_project)		
 	$(gcloud) container clusters get-credentials $(NAME) $(LOCATION_KIND) $(TF_VAR_location)
 
 createsa:
