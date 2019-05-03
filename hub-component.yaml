@@ -23,6 +23,7 @@ lifecycle:
 parameters:
   - name: kubernetes.gke.cluster
     env: CLUSTER_NAME
+    value: ${dns.name}
   - name: kubernetes.flavor
     value: gke
   - name: dns.domain
