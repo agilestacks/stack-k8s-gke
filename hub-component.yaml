@@ -22,7 +22,7 @@ lifecycle:
 
 parameters:
   - name: cloud.kind
-    value: gke
+    value: gcp
   - name: kubernetes.gke.cluster
     env: CLUSTER_NAME
     value: ${dns.name}
