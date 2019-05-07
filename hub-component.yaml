@@ -21,6 +21,8 @@ lifecycle:
       url: https://${kubernetes.api.endpoint}
 
 parameters:
+  - name: cloud.kind
+    value: gke
   - name: kubernetes.gke.cluster
     env: CLUSTER_NAME
     value: ${dns.name}
