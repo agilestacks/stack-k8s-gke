@@ -63,6 +63,10 @@ createsa:
 	fi
 	@sleep 10s
 
+storage:
+	$(kubectl) apply -f storage-class.yaml
+.PHONY: storage
+
 token:
 	$(eval SECRET=$(shell $(kubectl) get serviceaccount $(SERVICE_ACCOUNT) -o json | \
 		jq '.secrets[] | select(.name | contains("token")).name'))
@@ -83,7 +87,7 @@ output:
 	@echo
 .PHONY: output
 
-deploy: init plan apply gcontext createsa token region output
+deploy: init plan apply gcontext createsa storage token region output
 
 destroy: TF_CLI_ARGS:=-destroy $(TF_CLI_ARGS)
 destroy: plan	
