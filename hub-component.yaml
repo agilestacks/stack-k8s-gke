@@ -62,9 +62,10 @@ parameters:
 
 outputs:
   - name: kubernetes.gke.cluster
+  - name: cloud.kind
   - name: cloud.region
     fromTfVar: region
-  - name: cloud.availabilityZone  
+  - name: cloud.availabilityZone
   - name: dns.domain
   - name: dns.name
     fromTfVar: dns_name
@@ -76,4 +77,4 @@ outputs:
   - name: kubernetes.api.caCert
     fromTfVar: api_ca_crt
   - name: kubernetes.api.token
-    fromTfVar: token 
+    fromTfVar: token
