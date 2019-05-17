@@ -52,6 +52,7 @@ plan:
 
 apply:
 	$(terraform) apply $(TF_CLI_ARGS) -Xshadow=false $(TFPLAN)
+	@echo
 .PHONY: apply
 
 gcontext:
