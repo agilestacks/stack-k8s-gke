@@ -60,14 +60,11 @@ gcontext:
 .PHONY: gcontext
 
 createsa:
-	@if $(kubectl) get -n default serviceaccount $(SERVICE_ACCOUNT) ; then \
-		echo "Service Account $(SERVICE_ACCOUNT) exists"; \
-	else \
-		$(kubectl) create -n default serviceaccount $(SERVICE_ACCOUNT); \
+	$(kubectl) get -n default serviceaccount $(SERVICE_ACCOUNT) || \
+		$(kubectl) create -n default serviceaccount $(SERVICE_ACCOUNT)
+	$(kubectl) get clusterrolebinding $(SERVICE_ACCOUNT)-cluster-admin-binding || \
 		$(kubectl) create clusterrolebinding $(SERVICE_ACCOUNT)-cluster-admin-binding \
-			--clusterrole=cluster-admin --serviceaccount=default:$(SERVICE_ACCOUNT); \
-	fi
-	@sleep 10s
+			--clusterrole=cluster-admin --serviceaccount=default:$(SERVICE_ACCOUNT)
 .PHONY: createsa
 
 storage:
