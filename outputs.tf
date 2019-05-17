@@ -5,3 +5,7 @@ output "api_ca_crt" {
 output "endpoint" {
   value = "${google_container_cluster.primary.endpoint}"
 }
+
+output "network_name" {
+  value = "${google_compute_network.gke_vpc.name}"
+}
