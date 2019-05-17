@@ -7,3 +7,7 @@ provider "google" {
   project = "${var.project}"
   version = "2.6.0"
 }
+
+provider "local" {
+  version = "~> 1.2"
+}
