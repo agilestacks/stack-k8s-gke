@@ -5,7 +5,7 @@ meta:
   name: stack-k8s-gke
   brief: Google GKE
   source:
-      dir: ../../stack-k8s-gke/
+      dir: ../stack-k8s-gke/
 
 requires:
   - gcp
@@ -21,13 +21,9 @@ lifecycle:
       url: https://${kubernetes.api.endpoint}
 
 parameters:
-  - name: cloud.kind
-    value: gcp
   - name: kubernetes.gke.cluster
     env: CLUSTER_NAME
     value: ${dns.name}
-  - name: kubernetes.flavor
-    value: gke
   - name: dns.domain
     env: DOMAIN_NAME
   - name: cloud.region
@@ -61,8 +57,8 @@ parameters:
         env: TF_VAR_preemptible
 
 outputs:
-  - name: kubernetes.gke.cluster
   - name: cloud.kind
+    value: gcp
   - name: cloud.region
     fromTfVar: region
   - name: cloud.availabilityZone
@@ -73,7 +69,9 @@ outputs:
     fromTfVar: dns_name
   - name: dns.baseDomain
     fromTfVar: dns_base_domain
+  - name: kubernetes.gke.cluster
   - name: kubernetes.flavor
+    value: gke
   - name: kubernetes.api.endpoint
     fromTfVar: endpoint
   - name: kubernetes.api.caCert
