@@ -20,7 +20,7 @@ ifneq (,$(ZONE))
 endif
 
 export TF_VAR_base_domain ?= $(BASE_DOMAIN)
-export TF_VAR_project ?= superhub
+export TF_VAR_project ?= $(PROJECT)
 export TF_VAR_location ?= $(LOCATION)
 export TF_VAR_cluster_name := $(CLUSTER_NAME)
 export TF_VAR_node_machine_type ?= g1-small
@@ -36,7 +36,7 @@ TF_CLI_ARGS := -no-color -input=false -lock=false
 TFPLAN := $(TF_DATA_DIR)/$(DOMAIN_NAME).tfplan
 
 gcloud ?= gcloud
-kubectl ?= kubectl
+kubectl ?= kubectl --context=gke_$(PROJECT)_$(LOCATION)_$(CLUSTER_NAME)
 
 init:
 	@mkdir -p $(TF_DATA_DIR)

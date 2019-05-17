@@ -33,7 +33,7 @@ parameters:
     empty: allow
     env: ZONE
   - name: cloud.gcpProjectId
-    env: TF_VAR_project
+    env: PROJECT
 
   - name: terraform.bucket.name
     env: STATE_BUCKET
