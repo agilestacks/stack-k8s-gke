@@ -9,6 +9,11 @@ variable "max_node_count" {}
 variable "base_domain" {}
 variable "preemptible" {}
 
+variable "addons_istio" {
+  type = "string"
+  default = "disabled"
+}
+
 variable "asi_oauth_scopes" {
   type = "list"
 

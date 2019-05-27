@@ -1,9 +1,11 @@
 data "google_container_engine_versions" "latest" {
   location       = "${var.location}"
-  version_prefix = "1.12."
+  version_prefix = "1.13."
 }
 
 resource "google_container_cluster" "primary" {
+  provider = "google-beta"
+
   name                     = "${var.cluster_name}"
   location                 = "${var.location}"
   project                  = "${var.project}"
@@ -20,6 +22,12 @@ resource "google_container_cluster" "primary" {
 
     client_certificate_config {
       issue_client_certificate = false
+    }
+  }
+
+  addons_config {
+    istio_config {
+      disabled = "${var.addons_istio == "true" ? false : true}"
     }
   }
 }
