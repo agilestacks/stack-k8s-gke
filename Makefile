@@ -88,7 +88,7 @@ output:
 	@echo Outputs:
 	@echo dns_name = $(NAME)
 	@echo dns_base_domain = $(BASE_DOMAIN)
-	@echo token = $(TOKEN)
+	@echo token = $(TOKEN) | $(HUB) util otp
 	@echo region = $(REGION)
 	@echo
 .PHONY: output

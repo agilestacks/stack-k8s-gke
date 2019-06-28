@@ -19,6 +19,9 @@ lifecycle:
   readyConditions:
     - dns: ${kubernetes.api.endpoint}
       url: https://${kubernetes.api.endpoint}
+  options:
+    random:
+      bytes: 1536
 
 parameters:
   - name: kubernetes.gke.cluster
