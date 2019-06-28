@@ -65,7 +65,7 @@ createsa:
 		$(kubectl) create -n default serviceaccount $(SERVICE_ACCOUNT)
 	$(kubectl) get clusterrolebinding $(SERVICE_ACCOUNT)-cluster-admin-binding || \
 		$(kubectl) create clusterrolebinding $(SERVICE_ACCOUNT)-cluster-admin-binding \
-			--clusterrole=cluster-admin --serviceaccount=default:$(SERVICE_ACCOUNT)
+			--clusterrole=cluster-admin --serviceaccount=default:$(SERVICE_ACCOUNT) && sleep 7
 .PHONY: createsa
 
 storage:
@@ -73,11 +73,10 @@ storage:
 .PHONY: storage
 
 token:
-	$(eval SECRET=$(shell $(kubectl) get serviceaccount $(SERVICE_ACCOUNT) -o json | \
-		jq '.secrets[] | select(.name | contains("token")).name'))
-	$(eval TOKEN_BASE64=$(shell $(kubectl) get secret $(SECRET) -o json | \
-		jq '.data.token'))
-	$(eval TOKEN=$(shell openssl enc -A -base64 -d <<< $(TOKEN_BASE64)))
+	$(eval SECRET:=$(shell $(kubectl) get serviceaccount $(SERVICE_ACCOUNT) -o json | \
+		jq -r '.secrets[] | select(.name | contains("token")).name'))
+	$(eval TOKEN:=$(shell $(kubectl) get secret $(SECRET) -o json | \
+		jq -r '.data.token'))
 .PHONY: token
 
 region:

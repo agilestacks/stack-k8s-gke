@@ -82,4 +82,4 @@ outputs:
   - name: kubernetes.api.caCert
     fromTfVar: api_ca_crt
   - name: kubernetes.api.token
-    fromTfVar: token
+    fromTfVar: token/base64
