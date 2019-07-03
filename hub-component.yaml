@@ -70,6 +70,7 @@ outputs:
   - name: cloud.region
     fromTfVar: region
   - name: cloud.availabilityZone
+    fromTfVar: zone
   - name: cloud.network.name
     fromTfVar: network_name
   - name: dns.domain

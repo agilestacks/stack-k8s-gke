@@ -14,9 +14,11 @@ SERVICE_ACCOUNT ?= asi
 
 LOCATION := $(REGION)
 LOCATION_KIND :=--region
+DEFAULT_ZONE := $(REGION)-b
 ifneq (,$(ZONE))
-	LOCATION=$(ZONE)
-	LOCATION_KIND=--zone
+	LOCATION := $(ZONE)
+	LOCATION_KIND := --zone
+	DEFAULT_ZONE := $(ZONE)
 endif
 
 export TF_VAR_base_domain ?= $(BASE_DOMAIN)
@@ -90,6 +92,7 @@ output:
 	@echo dns_base_domain = $(BASE_DOMAIN)
 	@echo token = $(TOKEN) | $(HUB) util otp
 	@echo region = $(REGION)
+	@echo zone = $(DEFAULT_ZONE)
 	@echo
 .PHONY: output
 
