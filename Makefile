@@ -64,10 +64,10 @@ gcontext:
 
 createsa:
 	$(kubectl) get -n default serviceaccount $(SERVICE_ACCOUNT) || \
-		$(kubectl) create -n default serviceaccount $(SERVICE_ACCOUNT)
+		($(kubectl) create -n default serviceaccount $(SERVICE_ACCOUNT) && sleep 7)
 	$(kubectl) get clusterrolebinding $(SERVICE_ACCOUNT)-cluster-admin-binding || \
-		$(kubectl) create clusterrolebinding $(SERVICE_ACCOUNT)-cluster-admin-binding \
-			--clusterrole=cluster-admin --serviceaccount=default:$(SERVICE_ACCOUNT) && sleep 7
+		($(kubectl) create clusterrolebinding $(SERVICE_ACCOUNT)-cluster-admin-binding \
+			--clusterrole=cluster-admin --serviceaccount=default:$(SERVICE_ACCOUNT) && sleep 7)
 .PHONY: createsa
 
 storage:
