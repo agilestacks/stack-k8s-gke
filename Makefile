@@ -6,6 +6,7 @@ COMPONENT_NAME ?= stack-k8s-gke
 
 NAME           := $(shell echo $(DOMAIN_NAME) | cut -d. -f1)
 BASE_DOMAIN    := $(shell echo $(DOMAIN_NAME) | cut -d. -f2-)
+NAME2          := $(shell echo $(DOMAIN_NAME) | sed -E -e 's/[^[:alnum:]]+/-/g' | cut -c1-40)
 
 STATE_BUCKET ?= gcp-superhub-io
 STATE_REGION ?= us-central1
@@ -24,7 +25,7 @@ endif
 export TF_VAR_base_domain ?= $(BASE_DOMAIN)
 export TF_VAR_project ?= $(PROJECT)
 export TF_VAR_location ?= $(LOCATION)
-export TF_VAR_cluster_name := $(CLUSTER_NAME)
+export TF_VAR_cluster_name := $(or $(CLUSTER_NAME),$(NAME2))
 export TF_VAR_node_machine_type ?= g1-small
 export TF_VAR_min_node_count ?= 1
 export TF_VAR_max_node_count ?= 3
@@ -39,7 +40,7 @@ TF_CLI_ARGS := -no-color -input=false -lock=false
 TFPLAN := $(TF_DATA_DIR)/$(DOMAIN_NAME).tfplan
 
 gcloud ?= gcloud
-kubectl ?= kubectl --context=gke_$(PROJECT)_$(LOCATION)_$(CLUSTER_NAME)
+kubectl ?= kubectl --context=gke_$(PROJECT)_$(LOCATION)_$(TF_VAR_cluster_name)
 
 init:
 	@mkdir -p $(TF_DATA_DIR)
@@ -59,7 +60,7 @@ apply:
 .PHONY: apply
 
 gcontext:
-	$(gcloud) container clusters get-credentials $(CLUSTER_NAME) $(LOCATION_KIND) $(TF_VAR_location)
+	$(gcloud) container clusters get-credentials $(TF_VAR_cluster_name) $(LOCATION_KIND) $(TF_VAR_location)
 .PHONY: gcontext
 
 createsa:
@@ -90,6 +91,7 @@ output:
 	@echo Outputs:
 	@echo dns_name = $(NAME)
 	@echo dns_base_domain = $(BASE_DOMAIN)
+	@echo cluster_name = $(TF_VAR_cluster_name)
 	@echo token = $(TOKEN) | $(HUB) util otp
 	@echo region = $(REGION)
 	@echo zone = $(DEFAULT_ZONE)

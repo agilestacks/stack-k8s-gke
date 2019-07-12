@@ -24,9 +24,6 @@ lifecycle:
       bytes: 1536
 
 parameters:
-  - name: kubernetes.gke.cluster
-    env: CLUSTER_NAME
-    value: ${dns.name}
   - name: dns.domain
     env: DOMAIN_NAME
   - name: cloud.region
@@ -50,6 +47,9 @@ parameters:
       env: SERVICE_ACCOUNT
     - name: gke
       parameters:
+      - name: cluster
+        empty: allow
+        env: CLUSTER_NAME
       - name: nodeMachineType
         env: TF_VAR_node_machine_type
       - name: minNodeCount
@@ -78,7 +78,6 @@ outputs:
     fromTfVar: dns_name
   - name: dns.baseDomain
     fromTfVar: dns_base_domain
-  - name: kubernetes.gke.cluster
   - name: kubernetes.flavor
     value: gke
   - name: kubernetes.api.endpoint
@@ -87,3 +86,5 @@ outputs:
     fromTfVar: api_ca_crt
   - name: kubernetes.api.token
     fromTfVar: token/base64
+  - name: kubernetes.gke.cluster
+    fromTfVar: cluster_name
