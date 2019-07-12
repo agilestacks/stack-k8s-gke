@@ -33,7 +33,7 @@ resource "google_container_cluster" "primary" {
 }
 
 resource "google_container_node_pool" "primary_nodes" {
-  name     = "${var.cluster_name}-default-node-pool"
+  name     = "${var.cluster_name}"
   location = "${var.location}"
   cluster  = "${google_container_cluster.primary.name}"
 
@@ -59,5 +59,5 @@ resource "google_container_node_pool" "primary_nodes" {
 
 resource "local_file" "cluster_ca_certificate" {
   content  = "${base64decode(google_container_cluster.primary.master_auth.0.cluster_ca_certificate)}"
-  filename = "${path.cwd}/.terraform/${var.cluster_name}.${var.base_domain}/cluster_ca_certificate.pem"
+  filename = "${path.cwd}/.terraform/${var.domain}/cluster_ca_certificate.pem"
 }

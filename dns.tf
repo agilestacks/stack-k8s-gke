@@ -4,8 +4,8 @@ data "google_dns_managed_zone" "base" {
 }
 
 resource "google_dns_managed_zone" "main" {
-  name        = "${var.cluster_name}-${replace(var.base_domain, ".", "-")}"
-  dns_name    = "${var.cluster_name}.${var.base_domain}."
+  name        = "${replace(var.domain, ".", "-")}"
+  dns_name    = "${var.domain}."
   description = "${var.cluster_name} GKE Cluster DNS Zone"
   project     = "${var.project}"
 
@@ -15,7 +15,7 @@ resource "google_dns_managed_zone" "main" {
 }
 
 resource "google_dns_record_set" "parent" {
-  name         = "${var.cluster_name}.${var.base_domain}."
+  name         = "${var.domain}."
   managed_zone = "${data.google_dns_managed_zone.base.name}"
   type         = "NS"
   ttl          = 60
@@ -23,9 +23,9 @@ resource "google_dns_record_set" "parent" {
 }
 
 resource "google_dns_managed_zone" "internal" {
-  name        = "i-${var.cluster_name}-${replace(var.base_domain, ".", "-")}"
-  dns_name    = "i.${var.cluster_name}.${var.base_domain}."
-  description = "${var.cluster_name} GKE Cluster DNS Zone (internal)"
+  name        = "i-${replace(var.domain, ".", "-")}"
+  dns_name    = "i.${var.domain}."
+  description = "${var.cluster_name} GKE Cluster internal DNS Zone"
   project     = "${var.project}"
   visibility  = "private"
 
@@ -41,7 +41,7 @@ resource "google_dns_managed_zone" "internal" {
 }
 
 resource "google_dns_record_set" "internal" {
-  name         = "i.${var.cluster_name}.${var.base_domain}."
+  name         = "i.${var.domain}."
   managed_zone = "${google_dns_managed_zone.main.name}"
   type         = "NS"
   ttl          = 60
@@ -49,7 +49,7 @@ resource "google_dns_record_set" "internal" {
 }
 
 resource "google_dns_record_set" "api" {
-  name         = "api.${var.cluster_name}.${var.base_domain}."
+  name         = "api.${var.domain}."
   managed_zone = "${google_dns_managed_zone.main.name}"
   type         = "A"
   ttl          = 60

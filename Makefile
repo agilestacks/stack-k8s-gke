@@ -1,4 +1,3 @@
-SHELL := /bin/bash
 .DEFAULT_GOAL := deploy
 
 DOMAIN_NAME    ?= supergke.gcp.superhub.io
@@ -6,7 +5,7 @@ COMPONENT_NAME ?= stack-k8s-gke
 
 NAME           := $(shell echo $(DOMAIN_NAME) | cut -d. -f1)
 BASE_DOMAIN    := $(shell echo $(DOMAIN_NAME) | cut -d. -f2-)
-NAME2          := $(shell echo $(DOMAIN_NAME) | sed -E -e 's/[^[:alnum:]]+/-/g' | cut -c1-40)
+NAME2          := $(shell echo $(DOMAIN_NAME) | sed -E -e 's/[^[:alnum:]]+/-/g' | cut -c1-40 | sed -e 's/-$$//')
 
 STATE_BUCKET ?= gcp-superhub-io
 STATE_REGION ?= us-central1
@@ -22,6 +21,7 @@ ifneq (,$(ZONE))
 	DEFAULT_ZONE := $(ZONE)
 endif
 
+export TF_VAR_domain ?= $(DOMAIN_NAME)
 export TF_VAR_base_domain ?= $(BASE_DOMAIN)
 export TF_VAR_project ?= $(PROJECT)
 export TF_VAR_location ?= $(LOCATION)
@@ -66,7 +66,7 @@ gcontext:
 
 createsa:
 	$(kubectl) get -n default serviceaccount $(SERVICE_ACCOUNT) || \
-		($(kubectl) create -n default serviceaccount $(SERVICE_ACCOUNT) && sleep 7)
+		($(kubectl) create -n default serviceaccount $(SERVICE_ACCOUNT) && sleep 17)
 	$(kubectl) get clusterrolebinding $(SERVICE_ACCOUNT)-cluster-admin-binding || \
 		($(kubectl) create clusterrolebinding $(SERVICE_ACCOUNT)-cluster-admin-binding \
 			--clusterrole=cluster-admin --serviceaccount=default:$(SERVICE_ACCOUNT) && sleep 7)

@@ -6,6 +6,7 @@ variable "cluster_name" {}
 variable "node_machine_type" {}
 variable "min_node_count" {}
 variable "max_node_count" {}
+variable "domain" {}
 variable "base_domain" {}
 variable "preemptible" {}
 
