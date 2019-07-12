@@ -29,7 +29,8 @@ export TF_VAR_cluster_name := $(or $(CLUSTER_NAME),$(NAME2))
 export TF_VAR_node_machine_type ?= g1-small
 export TF_VAR_min_node_count ?= 1
 export TF_VAR_max_node_count ?= 3
-export TF_VAR_addons_istio ?= disabled
+export TF_VAR_preemptible ?=
+export TF_VAR_addons_istio ?= false
 
 terraform ?= terraform-v0.11
 
