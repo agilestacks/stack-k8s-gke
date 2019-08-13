@@ -18,7 +18,7 @@ resource "google_dns_record_set" "parent" {
   name         = "${var.domain}."
   managed_zone = "${data.google_dns_managed_zone.base.name}"
   type         = "NS"
-  ttl          = 60
+  ttl          = 300
   rrdatas      = ["${google_dns_managed_zone.main.name_servers}"]
 }
 
@@ -44,7 +44,7 @@ resource "google_dns_record_set" "internal" {
   name         = "i.${var.domain}."
   managed_zone = "${google_dns_managed_zone.main.name}"
   type         = "NS"
-  ttl          = 60
+  ttl          = 300
   rrdatas      = ["${google_dns_managed_zone.internal.name_servers}"]
 }
 
@@ -52,7 +52,7 @@ resource "google_dns_record_set" "api" {
   name         = "api.${var.domain}."
   managed_zone = "${google_dns_managed_zone.main.name}"
   type         = "A"
-  ttl          = 60
+  ttl          = 300
 
   rrdatas = ["${google_container_cluster.primary.endpoint}"]
 }
