@@ -1,6 +1,6 @@
 terraform {
   required_version = ">= 0.11.10"
-  backend          "gcs"            {}
+  backend "gcs" {}
 }
 
 provider "google" {
