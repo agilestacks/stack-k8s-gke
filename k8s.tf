@@ -55,6 +55,10 @@ resource "google_container_node_pool" "primary_nodes" {
 
     oauth_scopes = "${var.asi_oauth_scopes}"
   }
+
+  timeouts {
+    delete = "20m"
+  }
 }
 
 resource "local_file" "cluster_ca_certificate" {
