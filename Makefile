@@ -43,6 +43,8 @@ TFPLAN := $(TF_DATA_DIR)/$(DOMAIN_NAME).tfplan
 gcloud ?= gcloud
 kubectl ?= kubectl --context=gke_$(PROJECT)_$(LOCATION)_$(TF_VAR_cluster_name)
 
+deploy: init plan apply gcontext createsa storage token region output
+
 init:
 	@mkdir -p $(TF_DATA_DIR)
 	$(terraform) init -get=true $(TF_CLI_ARGS) -reconfigure -force-copy \
@@ -65,8 +67,8 @@ gcontext:
 .PHONY: gcontext
 
 createsa:
-	$(kubectl) get -n default serviceaccount $(SERVICE_ACCOUNT) || \
-		($(kubectl) create -n default serviceaccount $(SERVICE_ACCOUNT) && sleep 17)
+	$(kubectl) -n default get serviceaccount $(SERVICE_ACCOUNT) || \
+		($(kubectl) -n default create serviceaccount $(SERVICE_ACCOUNT) && sleep 17)
 	$(kubectl) get clusterrolebinding $(SERVICE_ACCOUNT)-cluster-admin-binding || \
 		($(kubectl) create clusterrolebinding $(SERVICE_ACCOUNT)-cluster-admin-binding \
 			--clusterrole=cluster-admin --serviceaccount=default:$(SERVICE_ACCOUNT) && sleep 7)
@@ -77,9 +79,9 @@ storage:
 .PHONY: storage
 
 token:
-	$(eval SECRET:=$(shell $(kubectl) get serviceaccount $(SERVICE_ACCOUNT) -o json | \
+	$(eval SECRET:=$(shell $(kubectl) -n default get serviceaccount $(SERVICE_ACCOUNT) -o json | \
 		jq -r '.secrets[] | select(.name | contains("token")).name'))
-	$(eval TOKEN:=$(shell $(kubectl) get secret $(SECRET) -o json | \
+	$(eval TOKEN:=$(shell $(kubectl) -n default get secret $(SECRET) -o json | \
 		jq -r '.data.token'))
 .PHONY: token
 
@@ -98,8 +100,6 @@ output:
 	@echo zone = $(DEFAULT_ZONE)
 	@echo
 .PHONY: output
-
-deploy: init plan apply gcontext createsa storage token region output
 
 destroy: TF_CLI_ARGS:=-destroy $(TF_CLI_ARGS)
 destroy: plan
