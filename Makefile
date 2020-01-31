@@ -43,7 +43,7 @@ TFPLAN := $(TF_DATA_DIR)/$(DOMAIN_NAME).tfplan
 gcloud ?= gcloud
 kubectl ?= kubectl --context=gke_$(PROJECT)_$(LOCATION)_$(TF_VAR_cluster_name)
 
-deploy: init plan apply gcontext createsa storage token region output
+deploy: init import plan apply gcontext createsa storage token region output
 
 init:
 	@mkdir -p $(TF_DATA_DIR)
@@ -89,6 +89,12 @@ region:
 	$(eval REGION=$(shell echo $(LOCATION) | cut -d- -f1-2))
 .PHONY: region
 
+import:
+	-$(terraform) import -provider=google $(TF_OPTS) google_dns_managed_zone.main $${DOMAIN_NAME//./-}
+	-$(terraform) import -provider=google $(TF_OPTS) google_dns_managed_zone.internal i-$${DOMAIN_NAME//./-}
+	-$(terraform) import -provider=google $(TF_OPTS) google_compute_network.gke_vpc $(TF_VAR_cluster_name)-vpc
+.PHONY: import
+
 output:
 	@echo
 	@echo Outputs:
@@ -104,4 +110,4 @@ output:
 destroy: TF_CLI_ARGS:=-destroy $(TF_CLI_ARGS)
 destroy: plan
 
-undeploy: init destroy apply
+undeploy: init import destroy apply
