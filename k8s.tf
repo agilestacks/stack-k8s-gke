@@ -1,6 +1,8 @@
 data "google_container_engine_versions" "latest" {
   location       = "${var.location}"
-  version_prefix = "1.14."
+  # Since this is just a string match, it's recommended that you append a . after minor versions
+  # Details: https://www.terraform.io/docs/providers/google/d/google_container_engine_versions.html#version_prefix
+  version_prefix = "${var.gke_kubernetes_version_prefix}."
 }
 
 resource "google_container_cluster" "primary" {

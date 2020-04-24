@@ -33,3 +33,8 @@ variable "asi_oauth_scopes" {
     "https://www.googleapis.com/auth/sqlservice.admin",
   ]
 }
+
+variable "gke_kubernetes_version_prefix" {
+  type = "string"
+  default = "1.15"
+}
