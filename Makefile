@@ -90,8 +90,8 @@ region:
 .PHONY: region
 
 import:
-	-$(terraform) import -provider=google $(TF_OPTS) google_dns_managed_zone.main $${DOMAIN_NAME//./-}
-	-$(terraform) import -provider=google $(TF_OPTS) google_dns_managed_zone.internal i-$${DOMAIN_NAME//./-}
+	-$(terraform) import -provider=google $(TF_OPTS) google_dns_managed_zone.main $$(echo $(DOMAIN_NAME) | sed -e 's/\./-/g')
+	-$(terraform) import -provider=google $(TF_OPTS) google_dns_managed_zone.internal i-$$(echo $(DOMAIN_NAME) | sed -e 's/\./-/g')
 	-$(terraform) import -provider=google $(TF_OPTS) google_compute_network.gke_vpc $(TF_VAR_cluster_name)-vpc
 .PHONY: import
 
