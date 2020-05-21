@@ -66,6 +66,9 @@ parameters:
       - name: preemptibleNodes
         value: false
         env: TF_VAR_preemptible
+      - name: volume.size
+        value: 30
+        env: TF_VAR_volume_size
       - name: addons
         parameters:
         - name: istio

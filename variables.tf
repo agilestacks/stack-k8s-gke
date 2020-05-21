@@ -9,6 +9,7 @@ variable "max_node_count" {}
 variable "domain" {}
 variable "base_domain" {}
 variable "preemptible" {}
+variable "volume_size" {}
 
 variable "addons_istio" {
   type = "string"

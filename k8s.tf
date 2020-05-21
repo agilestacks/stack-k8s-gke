@@ -50,6 +50,7 @@ resource "google_container_node_pool" "primary_nodes" {
   node_config {
     preemptible  = "${var.preemptible}"
     machine_type = "${var.node_machine_type}"
+    disk_size_gb = "${var.volume_size}"
 
     metadata {
       disable-legacy-endpoints = "true"
