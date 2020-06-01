@@ -37,5 +37,5 @@ variable "asi_oauth_scopes" {
 
 variable "gke_kubernetes_version_prefix" {
   type = "string"
-  default = "1.15"
+  default = "1.16"
 }
