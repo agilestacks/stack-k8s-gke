@@ -4,7 +4,7 @@ kind: component
 meta:
   name: stack-k8s-gke
   brief: Google GKE
-  version: 1.16
+  version: 1.17
   source:
       dir: ../stack-k8s-gke/
 
@@ -50,7 +50,7 @@ parameters:
       parameters:
       - name: version
         env: TF_VAR_gke_kubernetes_version_prefix
-        value: 1.16
+        value: 1.17
       - name: cluster
         empty: allow
         env: CLUSTER_NAME
