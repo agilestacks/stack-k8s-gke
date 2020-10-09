@@ -9,6 +9,8 @@ resource "google_dns_managed_zone" "main" {
   description = "${var.cluster_name} GKE Cluster DNS Zone"
   project     = var.project
 
+  force_destroy = true
+
   labels = {
     foo = var.cluster_name
   }
