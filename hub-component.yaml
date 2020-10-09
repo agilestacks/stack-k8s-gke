@@ -91,6 +91,8 @@ outputs:
     fromTfVar: dns_base_domain
   - name: kubernetes.flavor
     value: gke
+  - name: kubernetes.version
+    value: ${component.kubernetes.gke.version}
   - name: kubernetes.api.endpoint
     fromTfVar: endpoint
   - name: kubernetes.api.caCert
