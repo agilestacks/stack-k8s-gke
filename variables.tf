@@ -1,28 +1,55 @@
-variable "project" {}
+variable "project" {
+  type = string
+}
 
-variable "location" {}
+variable "location" {
+  type = string
+}
 
-variable "cluster_name" {}
-variable "node_machine_type" {}
-variable "min_node_count" {}
-variable "max_node_count" {}
-variable "domain" {}
-variable "base_domain" {}
-variable "preemptible" {}
-variable "volume_size" {}
+variable "cluster_name" {
+  type = string
+}
+
+variable "node_machine_type" {
+  type = string
+}
+
+variable "min_node_count" {
+  type = number
+}
+
+variable "max_node_count" {
+  type = number
+}
+
+variable "domain" {
+  type = string
+}
+
+variable "base_domain" {
+  type = string
+}
+
+variable "preemptible" {
+  type    = bool
+  default = false
+}
+
+variable "volume_size" {
+  type = number
+}
 
 variable "addons_istio" {
-  type = "string"
-  default = "disabled"
+  type    = bool
+  default = false
 }
 
 variable "asi_oauth_scopes" {
-  type = "list"
+  type = list(string)
 
   # https://developers.google.com/identity/protocols/googlescopes
   default = [
     "https://www.googleapis.com/auth/cloud-platform",
-    # "https://www.googleapis.com/auth/cloud-platform.read-only",
     "https://www.googleapis.com/auth/bigquery",
     "https://www.googleapis.com/auth/compute",
     "https://www.googleapis.com/auth/datastore",
@@ -36,6 +63,6 @@ variable "asi_oauth_scopes" {
 }
 
 variable "gke_kubernetes_version_prefix" {
-  type = "string"
+  type    = string
   default = "1.17"
 }

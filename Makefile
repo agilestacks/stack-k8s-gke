@@ -21,24 +21,24 @@ ifneq (,$(ZONE))
 	DEFAULT_ZONE := $(ZONE)
 endif
 
-export TF_VAR_domain ?= $(DOMAIN_NAME)
-export TF_VAR_base_domain ?= $(BASE_DOMAIN)
-export TF_VAR_project ?= $(PROJECT)
-export TF_VAR_location ?= $(LOCATION)
+export TF_VAR_domain       ?= $(DOMAIN_NAME)
+export TF_VAR_base_domain  ?= $(BASE_DOMAIN)
+export TF_VAR_project      ?= $(PROJECT)
+export TF_VAR_location     ?= $(LOCATION)
 export TF_VAR_cluster_name := $(or $(CLUSTER_NAME),$(NAME2))
-export TF_VAR_node_machine_type ?= g1-small
+export TF_VAR_node_machine_type ?= e2-small
 export TF_VAR_min_node_count ?= 1
 export TF_VAR_max_node_count ?= 3
 export TF_VAR_preemptible ?=
 export TF_VAR_addons_istio ?= false
 
-terraform ?= terraform-v0.11
+terraform ?= terraform-v0.12
 
-export TF_LOG      ?= info
 export TF_DATA_DIR ?= .terraform/$(DOMAIN_NAME)
 export TF_LOG_PATH ?= $(TF_DATA_DIR)/terraform.log
-TF_CLI_ARGS := -no-color -input=false -lock=false
-TFPLAN := $(TF_DATA_DIR)/$(DOMAIN_NAME).tfplan
+
+TF_CLI_ARGS ?= -input=false
+TFPLAN      := $(TF_DATA_DIR)/$(DOMAIN_NAME).tfplan
 
 gcloud ?= gcloud
 kubectl ?= kubectl --context=gke_$(PROJECT)_$(LOCATION)_$(TF_VAR_cluster_name)
@@ -53,12 +53,11 @@ init:
 .PHONY: init
 
 plan:
-	$(terraform) plan $(TF_CLI_ARGS) \
-		-refresh=true -module-depth=-1 -out=$(TFPLAN)
+	$(terraform) plan $(TF_CLI_ARGS) -out=$(TFPLAN)
 .PHONY: plan
 
 apply:
-	$(terraform) apply $(TF_CLI_ARGS) -Xshadow=false $(TFPLAN)
+	$(terraform) apply $(TF_CLI_ARGS) $(TFPLAN)
 	@echo
 .PHONY: apply
 
@@ -90,9 +89,9 @@ region:
 .PHONY: region
 
 import:
-	-$(terraform) import -provider=google $(TF_OPTS) google_dns_managed_zone.main $$(echo $(DOMAIN_NAME) | sed -e 's/\./-/g')
-	-$(terraform) import -provider=google $(TF_OPTS) google_dns_managed_zone.internal i-$$(echo $(DOMAIN_NAME) | sed -e 's/\./-/g')
-	-$(terraform) import -provider=google $(TF_OPTS) google_compute_network.gke_vpc $(TF_VAR_cluster_name)-vpc
+	-$(terraform) import -provider=google $(TF_CLI_ARGS) google_dns_managed_zone.main $$(echo $(DOMAIN_NAME) | sed -e 's/\./-/g')
+	-$(terraform) import -provider=google $(TF_CLI_ARGS) google_dns_managed_zone.internal i-$$(echo $(DOMAIN_NAME) | sed -e 's/\./-/g')
+	-$(terraform) import -provider=google $(TF_CLI_ARGS) google_compute_network.gke_vpc $(TF_VAR_cluster_name)-vpc
 .PHONY: import
 
 output:

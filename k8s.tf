@@ -1,20 +1,21 @@
 data "google_container_engine_versions" "latest" {
-  location       = "${var.location}"
+  location = var.location
+
   # Since this is just a string match, it's recommended that you append a . after minor versions
   # Details: https://www.terraform.io/docs/providers/google/d/google_container_engine_versions.html#version_prefix
   version_prefix = "${var.gke_kubernetes_version_prefix}."
 }
 
 resource "google_container_cluster" "primary" {
-  provider = "google-beta"
+  provider = google-beta
 
-  name                     = "${var.cluster_name}"
-  location                 = "${var.location}"
-  project                  = "${var.project}"
-  network                  = "${google_compute_network.gke_vpc.name}"
+  name                     = var.cluster_name
+  location                 = var.location
+  project                  = var.project
+  network                  = google_compute_network.gke_vpc.name
   remove_default_node_pool = true
-  min_master_version       = "${data.google_container_engine_versions.latest.latest_node_version}"
-  node_version             = "${data.google_container_engine_versions.latest.latest_node_version}"
+  min_master_version       = data.google_container_engine_versions.latest.latest_node_version
+  node_version             = data.google_container_engine_versions.latest.latest_node_version
 
   initial_node_count = 1
 
@@ -29,34 +30,34 @@ resource "google_container_cluster" "primary" {
 
   addons_config {
     istio_config {
-      disabled = "${var.addons_istio == "true" ? false : true}"
+      disabled = !var.addons_istio
     }
   }
 }
 
 resource "google_container_node_pool" "primary_nodes" {
-  name     = "${var.cluster_name}"
-  location = "${var.location}"
-  cluster  = "${google_container_cluster.primary.name}"
+  name     = var.cluster_name
+  location = var.location
+  cluster  = google_container_cluster.primary.name
 
-  initial_node_count = "${var.min_node_count}"
-  version            = "${data.google_container_engine_versions.latest.latest_node_version}"
+  initial_node_count = var.min_node_count
+  version            = data.google_container_engine_versions.latest.latest_node_version
 
   autoscaling {
-    min_node_count = "${var.min_node_count}"
-    max_node_count = "${var.max_node_count}"
+    min_node_count = var.min_node_count
+    max_node_count = var.max_node_count
   }
 
   node_config {
-    preemptible  = "${var.preemptible}"
-    machine_type = "${var.node_machine_type}"
-    disk_size_gb = "${var.volume_size}"
+    preemptible  = var.preemptible
+    machine_type = var.node_machine_type
+    disk_size_gb = var.volume_size
 
-    metadata {
+    metadata = {
       disable-legacy-endpoints = "true"
     }
 
-    oauth_scopes = "${var.asi_oauth_scopes}"
+    oauth_scopes = var.asi_oauth_scopes
   }
 
   timeouts {
@@ -65,6 +66,8 @@ resource "google_container_node_pool" "primary_nodes" {
 }
 
 resource "local_file" "cluster_ca_certificate" {
-  content  = "${base64decode(google_container_cluster.primary.master_auth.0.cluster_ca_certificate)}"
+  content = base64decode(
+    google_container_cluster.primary.master_auth[0].cluster_ca_certificate,
+  )
   filename = "${path.cwd}/.terraform/${var.domain}/cluster_ca_certificate.pem"
 }

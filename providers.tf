@@ -1,16 +1,16 @@
 terraform {
-  required_version = ">= 0.11.10"
+  required_version = ">= 0.12"
   backend "gcs" {}
 }
 
 provider "google" {
-  project = "${var.project}"
-  version = "2.20.1"
+  project = var.project
+  version = "3.42.0"
 }
 
 provider "google-beta" {
-  project = "${var.project}"
-  version = "2.20.1"
+  project = var.project
+  version = "3.42.0"
 }
 
 provider "local" {
